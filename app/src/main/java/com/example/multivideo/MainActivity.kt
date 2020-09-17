@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     val main_URL = "https://vt.tumblr.com/tumblr_o600t8hzf51qcbnq0_480.mp4"
     val pip_URL = "https://vt.tumblr.com/tumblr_o600t8hzf51qcbnq0_480.mp4"//"http://techslides.com/demos/sample-videos/small.mp4"
+    lateinit var subVideos : Array<VideoView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,16 +23,20 @@ class MainActivity : AppCompatActivity() {
 
         // init VideoView objects.
         mainVideo.setVideoURI(Uri.parse(main_URL));
-        pipVideo.setVideoURI(Uri.parse(pip_URL));
 
-        pipVideo.setVisibility(android.view.View.INVISIBLE)
+        subVideos = arrayOf(subVideo1, subVideo2, subVideo3)
 
-        // 이 방식으로도 되고,
-        pipVideo. setZOrderOnTop(true)
+        for(subVideo in subVideos) {
+            subVideo.setVideoURI(Uri.parse(pip_URL))
+            subVideo.setVisibility(View.INVISIBLE)
+
+            // 이 방식으로도 되고
+            subVideo.setZOrderOnTop(true)
+        }
 
         // 아래 방식으로도 됨.
         //mainVideo.setZOrderMediaOverlay(false)
-        //pipVideo.setZOrderMediaOverlay(true)
+        //subVideo.setZOrderMediaOverlay(true)
     }
 
     override fun onStart() {
@@ -42,17 +47,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
 
-        if(pipVideo.visibility == View.VISIBLE) {
+        for(subVideo in subVideos) {
+            if (subVideo.visibility == View.VISIBLE) {
+                subVideo.stopPlayback()
+                subVideo.setVisibility(android.view.View.INVISIBLE)
 
-            Log.v("SLEE","s.lee : pip = visible !  so goto invisible and stop ! ")
-            pipVideo.stopPlayback()
-            pipVideo.setVisibility(android.view.View.INVISIBLE)
-
-        }
-        else {
-            Log.v("SLEE","s.lee : pip = invisible !  so goto visible  and start ! ")
-            pipVideo.setVisibility(android.view.View.VISIBLE)
-            pipVideo.start()
+            } else {
+                subVideo.setVisibility(android.view.View.VISIBLE)
+                subVideo.start()
+            }
         }
 
         return super.onTouchEvent(event)
